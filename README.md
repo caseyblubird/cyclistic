@@ -1,0 +1,1 @@
+A second case study for Google's data analytics certification course. This one pertains to data from Cyclistic, a fictional bike share program. The purpose of these queries is to clean and transform the raw, source data into data that is consistent, clean, and free of errors.
