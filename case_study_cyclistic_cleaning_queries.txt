@@ -1,0 +1,318 @@
+
+USE Case_Studies
+DROP TABLE dbo.all_trip_data
+
+--Create new temp table
+SELECT * INTO all_trip_data
+FROM (
+	SELECT *
+	FROM dbo.[202301-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202302-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202303-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202304-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202305-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202306-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202307-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202308-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202309-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202310-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202311-cyclistic-tripdata] 
+		UNION ALL
+	SELECT *
+	FROM dbo.[202312-cyclistic-tripdata] 
+	) as tmp
+
+
+-- Start the cleaning of the data
+--Update misfield value 410 to NULL in station name
+UPDATE dbo.[all_trip_data] SET start_station_name = 'Campbell Ave & Augusta Blvd' WHERE start_station_name = '410' 
+UPDATE dbo.[all_trip_data] SET end_station_name = 'Campbell Ave & Augusta Blvd' WHERE end_station_name = '410'
+--
+--Delete rows that mention "TEST"
+DELETE FROM dbo.[all_trip_data]
+WHERE start_station_name LIKE '%OH - BONFIRE - TESTING%'
+DELETE FROM dbo.[all_trip_data]
+WHERE end_station_name LIKE '%OH - BONFIRE - TESTING%'
+DELETE FROM dbo.[all_trip_data]
+WHERE start_station_name LIKE 'OH Charging Stx - Test'
+DELETE FROM dbo.[all_trip_data]
+WHERE end_station_name LIKE 'OH Charging Stx - Test'
+
+--Remove asterisks
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'*','')
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'*','')
+
+--Replace (Damen)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Damen)','')
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Damen)','')
+
+--Replace (Temp)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Temp)','')
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Temp)','')
+--Replace  (Augusta Blvd) -
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Augusta Blvd)','') WHERE start_station_name LIKE '%(Augusta Blvd)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Augusta Blvd)','') WHERE end_station_name LIKE '%(Augusta Blvd)%'
+
+--Replace " (Lake) "-
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'Walnut (Lake) St','Walnut St') WHERE start_station_name LIKE '%Walnut (Lake) St%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name, 'Walnut (Lake) St','Walnut St') WHERE end_station_name LIKE '%Walnut (Lake) St%'
+
+--Replace (NEXT Apts) -
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (NEXT Apts)','') WHERE start_station_name LIKE '%(NEXT Apts)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name, ' (NEXT Apts)','') WHERE end_station_name LIKE '%(NEXT Apts)%'
+
+--Remove '(Murray)'
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Murray)','')  WHERE start_station_name LIKE '%(Murray)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Murray)','')  WHERE end_station_name LIKE '%(Murray)%'
+
+--Remove (NU)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (NU)','')  WHERE start_station_name LIKE '%(NU)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (NU)','') WHERE end_station_name LIKE '%(NU)%'
+
+--Remove (Ravenswood)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Ravenswood)','') WHERE start_station_name LIKE '%(Ravenswood)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Ravenswood)','') WHERE end_station_name LIKE '%(Ravenswood)%'
+
+--Remove (Columbus/Balbo)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Columbus/Balbo)','') WHERE start_station_name LIKE '%(Columbus/Balbo)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Columbus/Balbo)','') WHERE end_station_name LIKE '%(Columbus/Balbo)%'
+
+--Remove (Michigan/11th)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Michigan/11th)','') WHERE start_station_name LIKE '%(Michigan/11th)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Michigan/11th)','') WHERE end_station_name LIKE '%(Michigan/11th)%'
+
+--Remove (AMLI)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (AMLI)','')  WHERE start_station_name LIKE '%(AMLI)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (AMLI)','')  WHERE end_station_name LIKE '%(AMLI)%'
+
+--Remove  (Albany/30th)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (Albany/30th)','')  WHERE start_station_name LIKE '%(Albany/30th)%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (Albany/30th)','')  WHERE end_station_name LIKE '%(Albany/30th)%'
+
+--Remove parens around (Avalon Park)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'(Avalon Park)','Avalon Park') WHERE start_station_name LIKE '%Avalon%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'(Avalon Park)','Avalon Park') WHERE end_station_name LIKE '%Avalon%'
+
+--Update Buckingham - Fountain
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'Buckingham - Fountain','Buckingham Fountain') WHERE start_station_name = 'Buckingham - Fountain'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'Buckingham - Fountain','Buckingham Fountain') WHERE end_station_name = 'Buckingham - Fountain'
+
+--Replace "Base - "
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'Base - ','') WHERE start_station_name LIKE 'Base %'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'Base - ','') WHERE end_station_name LIKE 'Base %'
+
+--Add space between NewHastings -
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'NewHastings','New Hastings') WHERE start_station_name LIKE '%NewHastings%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name, 'NewHastings','New Hastings') WHERE end_station_name LIKE '%NewHastings%'
+
+-- Replace "and" with & for consistency
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' and ',' & ') WHERE start_station_name LIKE '% and %'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' and ',' & ') WHERE end_station_name LIKE '% and %'
+
+-- Use "Avenue" for consistency
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'Public Rack - Ave N & 106th St','Public Rack - Avenue N & 106th St')
+ WHERE start_station_name  = 'Public Rack - Ave N & 106th St'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'Public Rack - Ave N & 106th St','Public Rack - Avenue N & 106th St')
+ WHERE end_station_name = 'Public Rack - Ave N & 106th St'
+
+ --Remove '"Edward Duke"' -
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'"Edward Duke"','') WHERE start_station_name LIKE '%"Edward Duke"%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'"Edward Duke"','') WHERE end_station_name LIKE '%"Edward Duke"%'
+
+--Standardize street as "St" - use COLLATE to set the search as case sensitive
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' ST',' St')
+ WHERE start_station_name COLLATE SQL_Latin1_General_CP1_CS_AS LIKE '% ST%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' ST',' St')
+ WHERE end_station_name COLLATE SQL_Latin1_General_CP1_CS_AS LIKE '% ST%'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' st ',' St ') WHERE start_station_name LIKE '% st%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' st ',' St ') WHERE end_station_name LIKE '% st%'
+
+-- Fix typo 48t
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'& 48t ','& 48th ')
+ WHERE start_station_name LIKE '%Throop%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'& 48t ','& 48th ')
+ WHERE end_station_name LIKE '%Throop%'
+
+ --Flip format to list center - shop format
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'Valli Produce - Evanston Plaza','Evanston Plaza - Valli Produce')
+ WHERE start_station_name like '%Valli%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'Valli Produce - Evanston Plaza','Evanston Plaza - Valli Produce')
+ WHERE end_station_name like '%Valli%'
+
+--Remove all double spaces
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'  ',' ')
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'  ',' ')
+
+--Make formatting of cardinal directions consistent
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'St S','St - S') WHERE start_station_name LIKE '%St S'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'St S','St - S') WHERE end_station_name LIKE '%St S'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' S',' - S') 
+ WHERE start_station_name like '% S' AND start_station_name NOT LIKE '%St - S'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' S',' - S') 
+ WHERE end_station_name like '% S' AND end_station_name NOT LIKE '%St - S'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' (south)',' - S') WHERE start_station_name like '%(south)'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' (south)',' - S') WHERE end_station_name like  '%(south)'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'- South','- S') WHERE start_station_name like '%- South'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'- South','- S') WHERE end_station_name like '%- South'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' South','- S') WHERE start_station_name like '% South'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' South','- S') WHERE end_station_name like '% South'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'(east)','- E') WHERE start_station_name LIKE '%east%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'(east)','- E') WHERE end_station_name LIKE '%east%'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'- East','- E') WHERE start_station_name like '%- East'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'- East','- E') WHERE end_station_name like '%- East'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' E',' - E')
+ WHERE start_station_name LIKE '% E' AND start_station_name NOT LIKE '%- E'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' E',' - E')
+ WHERE end_station_name LIKE '% E' AND end_station_name NOT LIKE '%- E'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' N',' - N') WHERE start_station_name LIKE '% N'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' N',' - N') WHERE end_station_name LIKE '% N'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' SW','- SW')
+ WHERE start_station_name LIKE  '%SW' AND start_station_name NOT LIKE  '%- SW' 
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' SW','- SW')
+ WHERE end_station_name LIKE  '% SW'  AND end_station_name NOT LIKE  '%- SW'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'St-','St -') WHERE start_station_name LIKE '%St%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'St-','St -') WHERE end_station_name LIKE '%St%'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'- West','- W') WHERE start_station_name like '%- West'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'- West','- W') WHERE end_station_name like '%- West'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'West','- W') WHERE start_station_name like '%West'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'West','- W') WHERE end_station_name like '%West'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' W',' - W')
+WHERE start_station_name like '% W' AND start_station_name NOT like '%- W'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' W',' - W')
+WHERE end_station_name like '% W' AND end_station_name NOT like '%- W'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'- W',' - W')
+WHERE start_station_name LIKE '%- W' AND start_station_name NOT LIKE '% - W'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'- W',' - W')
+WHERE end_station_name LIKE '%- W' AND end_station_name NOT LIKE '% - W'
+
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,' NW',' - NW')
+ WHERE start_station_name LIKE '%NW' AND start_station_name NOT LIKE '%- NW'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,' NW',' - NW')
+ WHERE end_station_name LIKE '%NW' AND end_station_name NOT LIKE '%- NW'
+
+SELECT DISTINCT start_station_name FROM all_trip_data WHERE start_station_name LIKE '%- W' AND start_station_name NOT LIKE '% - W'
+SELECT DISTINCT  end_station_name FROM all_trip_data WHERE end_station_name LIKE '%- W' AND end_station_name NOT LIKE '% - W'
+
+--Remove '.' from station names
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'.','') WHERE start_station_name like '%.%'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'.','') WHERE end_station_name like '%.%'
+--Remove '.0' from station IDs
+UPDATE dbo.[all_trip_data] SET start_station_id = REPLACE(start_station_id,'.0','') WHERE start_station_id like '%.0'
+UPDATE dbo.[all_trip_data] SET end_station_id = REPLACE(end_station_id,'.0','') WHERE end_station_id like '%.0'
+
+--Remove all double spaces (again)
+UPDATE dbo.[all_trip_data] SET start_station_name = REPLACE(start_station_name,'  ',' ') WHERE start_station_id like '%  %'
+UPDATE dbo.[all_trip_data] SET end_station_name = REPLACE(end_station_name,'  ',' ') WHERE end_station_id like '%  %'
+
+--Add ride_length to table permanently
+ALTER TABLE all_trip_data
+ADD ride_length_minutes AS DATEDIFF(minute,started_at,ended_at) PERSISTED
+
+--Add day_of_week columns
+SELECT *
+	--Where Sunday = 1, Saturday = 7
+	,DATEPART(dw, started_at) as day_of_week
+FROM all_trip_data
+
+-------------------------------Analytics queries-------------------------------
+--Find average, min, and max trips. Find number of each membership type
+SELECT
+	member_casual
+	,COUNT(member_casual) as no_memberships
+	,AVG(DATEDIFF(minute,started_at,ended_at)) as avg_trip
+	,MAX(DATEDIFF(minute,started_at,ended_at)) as max_trip
+	,MIN(DATEDIFF(minute,started_at,ended_at)) as min_trip
+FROM all_trip_data
+GROUP BY member_casual
+
+--Determine favorite rideable for each membership
+SELECT
+	rideable_type
+	,COUNT(rideable_type) as no_bikes_member
+FROM all_trip_data
+WHERE member_casual = 'member'
+GROUP BY rideable_type
+ORDER BY COUNT(rideable_type) DESC
+
+SELECT
+	rideable_type
+	,COUNT(rideable_type) as no_bikes_casual
+FROM all_trip_data
+WHERE member_casual = 'casual'
+GROUP BY rideable_type
+ORDER BY COUNT(rideable_type) DESC
+
+--Determine most popular day of week for membership types
+SELECT
+	DATEPART(dw, started_at) as day_of_week
+	,COUNT(DATEPART(dw, started_at)) as no_trips_casual
+FROM all_trip_data
+WHERE member_casual = 'casual'
+GROUP BY DATEPART(dw, started_at)
+ORDER BY COUNT(DATEPART(dw, started_at)) DESC
+
+SELECT
+	DATEPART(dw, started_at) as day_of_week
+	,COUNT(DATEPART(dw, started_at)) as no_trips_member
+FROM all_trip_data
+WHERE member_casual = 'member'
+GROUP BY DATEPART(dw, started_at)
+ORDER BY COUNT(DATEPART(dw, started_at)) DESC
+
+USE Case_Studies
+
+--Add day_of_week columns
+SELECT *
+	--Where Sunday = 1, Saturday = 7
+	,DATEPART(dw, started_at) as day_of_week
+FROM all_trip_data
+
+------------------------------Scrap-----------------------------------------
+
+USE Case_Studies
+
+SELECT COUNT(ride_id) as ride_count, member_casual, DATENAME(DW,started_at) as start_month
+FROM all_trip_data
+WHERE DATENAME(DW,started_at) = 'Sunday'
+--started_at BETWEEN '2023-01-01' AND '2023-01-30'
+GROUP BY member_casual, DATENAME(DW,started_at)
+
+SELECT AVG(ride_length_minutes), DATENAME(dw, started_at) as day_of_week
+FROM all_trip_data
+WHERE member_casual = 'casual'
+GROUP BY DATENAME(dw, started_at)
